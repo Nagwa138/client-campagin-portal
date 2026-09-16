@@ -1,26 +1,31 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* Soft indigo-based palette */
+  --color-brand:        #6366f1;   /* indigo-500 — primary actions */
+  --color-brand-hover:  #4f46e5;   /* indigo-600 */
+  --color-bg:           #f8fafc;   /* slate-50 — page background */
+  --color-surface:      #ffffff;   /* card / panel backgrounds */
+  --color-border:       #e2e8f0;   /* slate-200 */
+  --color-text:         #0f172a;   /* slate-900 — primary text */
+  --color-muted:        #64748b;   /* slate-500 — secondary text */
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
   }
-}
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    color: #0f172a;
+    background: #f8fafc;
+  }
 }
