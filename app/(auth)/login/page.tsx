@@ -1,25 +1,28 @@
-﻿'use client'
+'use client'
 
-import { useState, useEffect } from 'react'
+import { Suspense, useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
 const ERROR_MESSAGES: Record<string, string> = {
-  no_access:   'Your Google account is not linked to any brand. Contact your administrator.',
+  no_access:    'Your Google account is not linked to any brand. Contact your administrator.',
   oauth_failed: 'Google sign-in failed. Please try again.',
 }
 
-export default function LoginPage() {
+function ErrorFromParams({ onError }: { onError: (msg: string) => void }) {
   const searchParams = useSearchParams()
+  useEffect(() => {
+    const errorParam = searchParams.get('error')
+    if (errorParam) onError(ERROR_MESSAGES[errorParam] ?? 'An error occurred. Please try again.')
+  }, [searchParams, onError])
+  return null
+}
+
+function LoginForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
-
-  useEffect(() => {
-    const errorParam = searchParams.get('error')
-    if (errorParam) setError(ERROR_MESSAGES[errorParam] ?? 'An error occurred. Please try again.')
-  }, [searchParams])
 
   async function handleEmailLogin(e: React.FormEvent) {
     e.preventDefault()
@@ -50,7 +53,7 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen bg-[#f8fafc]">
-      {/* Left panel — Apple-style dark */}
+      {/* Left panel */}
       <div className="hidden lg:flex lg:w-1/2 flex-col justify-between bg-gradient-to-br from-indigo-950 via-indigo-900 to-violet-900 p-14 text-white">
         <div className="flex items-center gap-2.5">
           <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#6366f1]">
@@ -89,6 +92,10 @@ export default function LoginPage() {
 
       {/* Right panel — form */}
       <div className="flex w-full lg:w-1/2 flex-col justify-center px-6 py-12 sm:px-12 lg:px-16 bg-white">
+        <Suspense>
+          <ErrorFromParams onError={setError} />
+        </Suspense>
+
         {/* Mobile logo */}
         <div className="mb-10 lg:hidden flex items-center gap-2">
           <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#6366f1]">
@@ -181,4 +188,8 @@ export default function LoginPage() {
       </div>
     </div>
   )
+}
+
+export default function LoginPage() {
+  return <LoginForm />
 }
