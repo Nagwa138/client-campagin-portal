@@ -11,12 +11,21 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = await createClient()
-    const { error } = await supabase.auth.exchangeCodeForSession(code)
-    if (!error) {
+    const { data: { user }, error } = await supabase.auth.exchangeCodeForSession(code)
+    if (!error && user) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', user.id)
+        .single()
+
+      if (!profile) {
+        return NextResponse.redirect(`${origin}/login?error=no_access`)
+      }
+
       return NextResponse.redirect(`${origin}/dashboard`)
     }
   }
 
-  // Something went wrong — send back to login with an error hint
   return NextResponse.redirect(`${origin}/login?error=oauth_failed`)
 }

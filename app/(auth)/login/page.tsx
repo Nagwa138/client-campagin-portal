@@ -1,13 +1,25 @@
 ﻿'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
+const ERROR_MESSAGES: Record<string, string> = {
+  no_access:   'Your Google account is not linked to any brand. Contact your administrator.',
+  oauth_failed: 'Google sign-in failed. Please try again.',
+}
+
 export default function LoginPage() {
+  const searchParams = useSearchParams()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    const errorParam = searchParams.get('error')
+    if (errorParam) setError(ERROR_MESSAGES[errorParam] ?? 'An error occurred. Please try again.')
+  }, [searchParams])
 
   async function handleEmailLogin(e: React.FormEvent) {
     e.preventDefault()

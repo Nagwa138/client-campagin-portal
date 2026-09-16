@@ -60,7 +60,8 @@ export async function proxy(request: NextRequest) {
   }
 
   // Redirect already-authenticated users away from the login page
-  if (user && pathname === '/login') {
+  // but not when there's an error param (e.g. no_access) — that would loop
+  if (user && pathname === '/login' && !request.nextUrl.searchParams.get('error')) {
     const dashboardUrl = request.nextUrl.clone()
     dashboardUrl.pathname = '/dashboard'
     return NextResponse.redirect(dashboardUrl)
