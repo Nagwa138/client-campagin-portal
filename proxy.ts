@@ -48,6 +48,7 @@ export async function proxy(request: NextRequest) {
   // Routes that are accessible without a session
   const isPublicPath =
     pathname.startsWith('/login') ||
+    pathname.startsWith('/auth/callback') ||
     pathname.startsWith('/shared') ||
     pathname.startsWith('/api/shared-links') ||
     pathname.startsWith('/api/webhooks')
